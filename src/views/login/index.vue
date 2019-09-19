@@ -4,19 +4,19 @@
           <div class="title">
               <img src="../../assets/img/logo_index.png" alt="">
           </div>
-          <el-form style="margin-top:20px">
-              <el-form-item>
-                  <el-input></el-input>
+          <el-form ref="myForm" style="margin-top:20px" :model="loginForm" :rules="loginRules">
+              <el-form-item prop="mobile">
+                  <el-input v-model="loginForm.mobile" placeholder="请输入手机号"></el-input>
               </el-form-item>
-              <el-form-item>
-                  <el-input style="width:65%"></el-input>
+              <el-form-item prop="code">
+                  <el-input v-model="loginForm.code" placeholder="请输入验证码" style="width:65%"></el-input>
                   <el-button style="float:right">发送验证码</el-button>
               </el-form-item>
-              <el-form-item>
-                  <el-checkbox>我已阅读并同意用户协议和隐私条款</el-checkbox>
+              <el-form-item prop="agree">
+                  <el-checkbox v-model="loginForm.agree">我已阅读并同意用户协议和隐私条款</el-checkbox>
               </el-form-item>
               <el-form-item>
-                  <el-button style="width:100%" type="primary">登录</el-button>
+                  <el-button @click="login" style="width:100%" type="primary">登录</el-button>
               </el-form-item>
           </el-form>
       </el-card>
@@ -25,7 +25,40 @@
 
 <script>
 export default {
-
+  data () {
+    let validator = function (rule, value, callback) {
+    //   if (value) {
+    //     callback()
+    //   } else {
+    //     callback(new Error('您必须同意用户协议和隐私条款'))
+    //   }
+    // },
+      value ? callback() : callback(new Error('您必须同意用户协议和隐私条款'))
+    }
+    return {
+      loginForm: {
+        mobile: '',
+        code: '',
+        agree: false
+      },
+      loginRules: {
+        mobile: [{ required: true, message: '请输入手机号' }, { pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号' }],
+        code: [{ required: true, message: '请输入验证码' }, { pattern: /^\d{6}$/, message: '验证码为6位数字' }],
+        agree: [{ validator }]
+      }
+    }
+  },
+  methods: {
+    login () {
+      this.$refs.myForm.validate(function (isOk) {
+        if (isOk) {
+          console.log('校验成功')
+        } else {
+          console.log('校验失败')
+        }
+      })
+    }
+  }
 }
 </script>
 
