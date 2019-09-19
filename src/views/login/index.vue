@@ -50,11 +50,18 @@ export default {
   },
   methods: {
     login () {
-      this.$refs.myForm.validate(function (isOk) {
+      this.$refs.myForm.validate((isOk) => {
         if (isOk) {
-          console.log('校验成功')
-        } else {
-          console.log('校验失败')
+          this.$axios({
+            method: 'post',
+            url: 'http://ttapi.research.itcast.cn/mp/v1_0/authorizations',
+            data: this.loginForm
+          }).then(result => {
+            window.localStorage.setItem('user-token', result.data.data.token)
+            this.$router.push('/home')
+          }).catch(() => {
+            this.$message({ type: 'warning', message: '账号或密码错误' })
+          })
         }
       })
     }
