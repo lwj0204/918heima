@@ -40,7 +40,7 @@ export default {
     },
     commonClick (key) {
       if (key === 'account') {
-        //   账户信息
+        this.$router.push('/home/account')
       } else if (key === 'git') {
         window.location.href = 'https://github.com/lwj0204/918heima.git'
       } else {
