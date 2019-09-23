@@ -10,9 +10,16 @@
           <el-table-column align="center" label="总评论数" prop="total_comment_count"></el-table-column>
           <el-table-column align="center" label="粉丝评论数" prop="fans_comment_count"></el-table-column>
           <el-table-column label="操作">
-              <!-- 自定义内容 -->
-              <el-button type="text" size="small">修改</el-button>
-              <el-button type="text" size="small">关闭评论</el-button>
+              <!-- 作用域插槽 -->
+              <template slot-scope="obj">
+                <!-- 自定义内容 -->
+                <el-button type="text" size="small">修改</el-button>
+                <el-button type="text" size="small">
+                  {{
+                      obj.row.comment_status ? '关闭评论': '打开评论'
+                  }}
+                </el-button>
+              </template>
           </el-table-column>
       </el-table>
   </el-card>
