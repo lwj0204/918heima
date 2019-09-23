@@ -59,8 +59,6 @@ export default {
           }).then(result => {
             window.localStorage.setItem('user-token', result.data.token)
             this.$router.push('/home')
-          }).catch(() => {
-            this.$message({ type: 'warning', message: '账号或密码错误' })
           })
         }
       })
