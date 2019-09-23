@@ -57,7 +57,7 @@ export default {
             url: 'http://ttapi.research.itcast.cn/mp/v1_0/authorizations',
             data: this.loginForm
           }).then(result => {
-            window.localStorage.setItem('user-token', result.data.data.token)
+            window.localStorage.setItem('user-token', result.data.token)
             this.$router.push('/home')
           }).catch(() => {
             this.$message({ type: 'warning', message: '账号或密码错误' })
