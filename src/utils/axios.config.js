@@ -1,8 +1,14 @@
 // 负责对axios进行处理
 import axios from 'axios'
+import jsonBig from 'json-bigint'
 import router from '../permission' // 导入一个实例
 import { Message } from 'element-ui'
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'
+
+axios.defaults.transformResponse = [function (data) {
+  return jsonBig.parse(data)
+}]
+
 // 请求拦截 请求到达后台之前拦截
 axios.interceptors.request.use(function (config) {
   // 在发起请求前做一些处理
@@ -43,7 +49,7 @@ axios.interceptors.response.use(function (response) {
     default:
       break
   }
-  Message({ message })
+  Message({ message, type: 'warning' })
   return new Promise(function () {}) // 终止当前错误
 })
 // export default axios
