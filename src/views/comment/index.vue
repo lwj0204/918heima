@@ -22,6 +22,18 @@
               </template>
           </el-table-column>
       </el-table>
+      <el-row type="flex" justify="center" style="margin:20px 0">
+            <el-pagination
+            @current-change="changePage"
+                 background
+                layout="prev, pager, next"
+                :total="page.total"
+                :page-size="page.pageSize"
+                :current-page="page.currentPage"
+                >
+            </el-pagination>
+      </el-row>
+
   </el-card>
 </template>
 
@@ -29,17 +41,27 @@
 export default {
   data () {
     return {
-      list: []
+      list: [],
+      page: {
+        total: 0,
+        currentPage: 1,
+        pageSize: 10
+      }
     }
   },
   methods: {
+    changePage (newPage) {
+      this.page.currentPage = newPage
+      this.getComment()
+    },
     //   获取评论列表
     getComment () {
       this.$axios({
         url: '/articles',
-        params: { response_type: 'comment' }
+        params: { response_type: 'comment', page: this.page.currentPage, per_page: this.page.pageSize }
       }).then(result => {
         this.list = result.data.results
+        this.page.total = result.data.total_count
       })
     },
     stateFormatter (row, column, cellvalue, index) {
