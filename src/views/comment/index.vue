@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card v-loading="loading">
       <bread-crumb slot="header">
         <template slot="title">评论列表</template>
       </bread-crumb>
@@ -46,7 +46,8 @@ export default {
         total: 0,
         currentPage: 1,
         pageSize: 10
-      }
+      },
+      loading: false // 定义一个变量
     }
   },
   methods: {
@@ -56,12 +57,14 @@ export default {
     },
     //   获取评论列表
     getComment () {
+      this.loading = true // 显示遮罩
       this.$axios({
         url: '/articles',
         params: { response_type: 'comment', page: this.page.currentPage, per_page: this.page.pageSize }
       }).then(result => {
         this.list = result.data.results
         this.page.total = result.data.total_count
+        this.loading = false
       })
     },
     stateFormatter (row, column, cellvalue, index) {
