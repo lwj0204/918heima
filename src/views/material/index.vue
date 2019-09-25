@@ -1,5 +1,5 @@
 <template>
-<el-card>
+<el-card v-loading="loading">
     <bread-crumb slot="header">
         <template slot="title">素材管理</template>
     </bread-crumb>
@@ -12,8 +12,9 @@
                 <el-card class="img-item" v-for="item in list" :key="item.id">
                     <img :src="item.url" alt="">
                     <div class="operate">
-                        <i class="el-icon-star-on" :style="{color:item.is_collected ? 'red' : '#000'}"></i>
-                        <i class="el-icon-delete-solid"></i>
+                        <i @click=" collectOrCancel(item)" class="el-icon-star-on" :style="{color:item.is_collected ? 'red' : '#000'}"></i>
+                        <!-- 删除 -->
+                        <i @click="delImg(item.id)" class="el-icon-delete-solid"></i>
                     </div>
                 </el-card>
             </div>
@@ -61,10 +62,35 @@ export default {
         total: 0,
         currentPage: 1,
         pageSize: 10
-      }
+      },
+      loading: false
     }
   },
   methods: {
+    //   取消或者收藏
+    collectOrCancel (item) {
+      let mess = item.is_collected ? '取消' : ''
+      this.$confirm(`您确定要${mess}收藏该图片？`).then(() => {
+        this.$axios({
+          url: `/user/images/${item.id}`,
+          method: 'put',
+          data: { collect: !item.is_collected }
+        }).then(() => {
+          this.getMaterial()
+        })
+      })
+    },
+    //   删除图片
+    delImg (id) {
+      this.$confirm('您确定要删除该图片吗？').then(() => {
+        this.$axios({
+          url: `/user/images/${id}`,
+          method: 'delete'
+        }).then(() => {
+          this.getMaterial()
+        })
+      })
+    },
     uploadImg (params) {
       let data = new FormData()
       data.append('image', params.file)
@@ -86,6 +112,7 @@ export default {
       this.getMaterial()
     },
     getMaterial (collect) {
+      this.loading = true
       this.$axios({
         url: '/user/images',
         params: {
@@ -96,6 +123,7 @@ export default {
       }).then(result => {
         this.list = result.data.results
         this.page.total = result.data.total_count // 赋值总数
+        this.loading = false
       })
     }
   },

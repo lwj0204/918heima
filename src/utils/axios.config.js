@@ -6,7 +6,7 @@ import { Message } from 'element-ui'
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'
 
 axios.defaults.transformResponse = [function (data) {
-  return jsonBig.parse(data)
+  return data ? jsonBig.parse(data) : {}
 }]
 
 // 请求拦截 请求到达后台之前拦截
