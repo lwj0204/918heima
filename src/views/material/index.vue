@@ -3,6 +3,9 @@
     <bread-crumb slot="header">
         <template slot="title">素材管理</template>
     </bread-crumb>
+    <el-upload class="uploadImg" action="" :http-request="uploadImg" :show-file-list="false">
+        <el-button type="primary">上传图片</el-button>
+    </el-upload>
     <el-tabs v-model="activeName" @tab-click="changeTab">
         <el-tab-pane label="全部素材" name="all">
             <div class="img-list">
@@ -62,6 +65,17 @@ export default {
     }
   },
   methods: {
+    uploadImg (params) {
+      let data = new FormData()
+      data.append('image', params.file)
+      this.$axios({
+        url: '/user/images',
+        method: 'post',
+        data
+      }).then(() => {
+        this.getMaterial()
+      })
+    },
     changePage (newPage) {
       this.page.currentPage = newPage // 将最新页码赋值给currentPage
       this.getMaterial() // 获取最新数据
@@ -92,6 +106,11 @@ export default {
 </script>
 
 <style lang='less' scoped>
+    .uploadImg {
+        position: absolute;
+        right:20px;
+        margin-top: -10px;
+    }
     .img-list {
         display: flex;
         flex-wrap:wrap;
