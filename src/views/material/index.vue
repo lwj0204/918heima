@@ -3,7 +3,7 @@
     <bread-crumb slot="header">
         <template slot="title">素材管理</template>
     </bread-crumb>
-    <el-tabs v-model="activeName" @tab-click="getMaterial">
+    <el-tabs v-model="activeName" @tab-click="changeTab">
         <el-tab-pane label="全部素材" name="all">
             <div class="img-list">
                 <el-card class="img-item" v-for="item in list" :key="item.id">
@@ -14,6 +14,17 @@
                     </div>
                 </el-card>
             </div>
+            <el-row type="flex" justify="center">
+                <el-pagination
+                @current-change="changePage"
+                    background
+                    layout="prev, pager, next"
+                    :total="page.total"
+                    :current-page="page.currentPage"
+                    :page-size="page.pageSize"
+                    >
+                </el-pagination>
+            </el-row>
         </el-tab-pane>
         <el-tab-pane label="收藏素材" name="collect">
             <div class="img-list">
@@ -21,6 +32,17 @@
                     <img :src="item.url" alt="">
                 </el-card>
             </div>
+            <el-row type="flex" justify="center">
+                <el-pagination
+                @current-change="changePage"
+                    background
+                    layout="prev, pager, next"
+                    :total="page.total"
+                    :current-page="page.currentPage"
+                    :page-size="page.pageSize"
+                    >
+                </el-pagination>
+            </el-row>
         </el-tab-pane>
     </el-tabs>
 </el-card>
@@ -31,18 +53,35 @@ export default {
   data () {
     return {
       activeName: 'all', // 默认选择全部素材
-      list: [] // 定义一个list接收数据
+      list: [], // 定义一个list接收数据
+      page: {
+        total: 0,
+        currentPage: 1,
+        pageSize: 10
+      }
     }
   },
   methods: {
+    changePage (newPage) {
+      this.page.currentPage = newPage // 将最新页码赋值给currentPage
+      this.getMaterial() // 获取最新数据
+    },
+    // 切换页签方法
+    changeTab () {
+      this.page.currentPage = 1
+      this.getMaterial()
+    },
     getMaterial (collect) {
       this.$axios({
         url: '/user/images',
         params: {
-          collect: this.activeName === 'collect'
+          collect: this.activeName === 'collect',
+          page: this.page.currentPage,
+          per_page: this.page.pageSize
         }
       }).then(result => {
         this.list = result.data.results
+        this.page.total = result.data.total_count // 赋值总数
       })
     }
   },
